@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AD Risk Register — schneider050.local</title>
+<style>
+  :root {
+    --critical: #b30000; --high: #d9642c; --medium: #c9a227; --low: #4a7a3c;
+    --bg: #f7f7f8; --card: #ffffff; --text: #1c1c1e; --muted: #6b6b70; --border: #e3e3e6;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 32px; }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .summary { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 18px; min-width: 110px; }
+  .stat .n { font-size: 26px; font-weight: 700; }
+  .stat .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .stat.critical .n { color: var(--critical); }
+  .stat.high .n { color: var(--high); }
+  .stat.medium .n { color: var(--medium); }
+  .stat.low .n { color: var(--low); }
+  .posture { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--text); border-radius: 8px; padding: 14px 18px; margin-bottom: 28px; font-weight: 600; }
+  .finding { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; border-left: 5px solid var(--border); }
+  .finding.critical { border-left-color: var(--critical); }
+  .finding.high { border-left-color: var(--high); }
+  .finding.medium { border-left-color: var(--medium); }
+  .finding.low { border-left-color: var(--low); }
+  .finding h2 { font-size: 16px; margin: 0 0 6px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 2px 8px; border-radius: 4px; color: #fff; margin-right: 8px; }
+  .badge.critical { background: var(--critical); }
+  .badge.high { background: var(--high); }
+  .badge.medium { background: var(--medium); }
+  .badge.low { background: var(--low); }
+  .risk-id { color: var(--muted); font-size: 12px; font-family: monospace; }
+  .desc { margin: 10px 0; font-size: 14px; line-height: 1.5; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; margin-top: 12px; }
+  .grid div span.k { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .03em; margin-bottom: 2px; }
+  .affected { font-size: 12px; color: var(--muted); margin-top: 10px; word-break: break-word; }
+  .empty { text-align: center; color: var(--muted); padding: 40px; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 32px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Active Directory Risk Register</h1>
+  <div class="meta">Domain: <strong>schneider050.local</strong> &nbsp;·&nbsp; 4 user objects scanned &nbsp;·&nbsp; Generated 2026-09-27 12:54 UTC</div>
+
+  <div class="posture">Overall posture: Critical — immediate remediation required</div>
+
+  <div class="summary">
+    <div class="stat critical"><div class="n">1</div><div class="l">Critical</div></div>
+    <div class="stat high"><div class="n">3</div><div class="l">High</div></div>
+    <div class="stat medium"><div class="n">1</div><div class="l">Medium</div></div>
+    <div class="stat low"><div class="n">0</div><div class="l">Low</div></div>
+  </div>
+
+  
+
+  
+    
+    <div class="finding critical">
+      <span class="badge critical">Critical</span>
+      <span class="risk-id">AD-001</span>
+      <h2>Accounts vulnerable to AS-REP Roasting</h2>
+      <div class="desc">1 enabled user account(s) have Kerberos pre-authentication disabled (userAccountControl DONT_REQUIRE_PREAUTH). Any unauthenticated user on the network can request an AS-REP for these accounts and attempt to crack the returned hash offline to recover the account password.</div>
+      <div class="grid">
+        <div><span class="k">MITRE ATT&amp;CK</span>T1558.004 — Steal or Forge Kerberos Tickets: AS-REP Roasting</div>
+        <div><span class="k">Control reference</span>NIST 800-53 IA-5(1) (Password-Based Authentication) / CIS Control 5.2</div>
+        <div><span class="k">Likelihood / Impact</span>HIGH / HIGH</div>
+        <div><span class="k">Affected objects</span>1</div>
+      </div>
+      <div class="desc"><strong>Recommendation:</strong> Re-enable Kerberos pre-authentication for every affected account unless a specific, documented legacy application requires it. Where it cannot be disabled, ensure the account uses a long, random password (25+ characters) that is not feasible to crack offline.</div>
+      <div class="affected">Affected: alice</div>
+    </div>
+    
+    <div class="finding high">
+      <span class="badge high">High</span>
+      <span class="risk-id">AD-002</span>
+      <h2>Kerberoastable service accounts</h2>
+      <div class="desc">1 enabled user account(s) have a Service Principal Name (SPN) set, meaning any authenticated domain user can request a Kerberos service ticket for them and attempt to crack it offline. 1 of these also belong to more than one group, which is worth checking for privileged membership.</div>
+      <div class="grid">
+        <div><span class="k">MITRE ATT&amp;CK</span>T1558.003 — Steal or Forge Kerberos Tickets: Kerberoasting</div>
+        <div><span class="k">Control reference</span>NIST 800-53 IA-5(1) / CIS Control 5.2</div>
+        <div><span class="k">Likelihood / Impact</span>MEDIUM / HIGH</div>
+        <div><span class="k">Affected objects</span>1</div>
+      </div>
+      <div class="desc"><strong>Recommendation:</strong> Set long, random passwords (25+ characters) on every service account, rotate them on a defined schedule, and prefer Group Managed Service Accounts (gMSA) for any new service account, since gMSA passwords are machine-managed and effectively immune to offline cracking.</div>
+      <div class="affected">Affected: svc_backup</div>
+    </div>
+    
+    <div class="finding high">
+      <span class="badge high">High</span>
+      <span class="risk-id">AD-003</span>
+      <h2>Weak domain password policy</h2>
+      <div class="desc">The default domain password policy has the following weaknesses: minimum password length is 8 characters (recommended: 14+); passwords never expire.</div>
+      <div class="grid">
+        <div><span class="k">MITRE ATT&amp;CK</span>T1110 — Brute Force</div>
+        <div><span class="k">Control reference</span>NIST 800-63B (Memorized Secret Verifiers) / CIS Control 5.2</div>
+        <div><span class="k">Likelihood / Impact</span>HIGH / MEDIUM</div>
+        <div><span class="k">Affected objects</span>1</div>
+      </div>
+      <div class="desc"><strong>Recommendation:</strong> Raise the minimum password length to at least 14 characters, keep complexity enabled, and set a bounded maximum password age. For accounts protected by MFA, consider NIST 800-63B's guidance to favor length over forced periodic rotation.</div>
+      <div class="affected">Affected: Default Domain Policy</div>
+    </div>
+    
+    <div class="finding high">
+      <span class="badge high">High</span>
+      <span class="risk-id">AD-005</span>
+      <h2>Privileged group membership sprawl</h2>
+      <div class="desc">1 tier-0 group(s) exceed 5 members: Domain Admins (7 members). Each additional member is a full domain-compromise path if their account is breached.</div>
+      <div class="grid">
+        <div><span class="k">MITRE ATT&amp;CK</span>T1078.002 — Valid Accounts: Domain Accounts</div>
+        <div><span class="k">Control reference</span>NIST 800-53 AC-6(1) (Least Privilege — Authorize Access to Security Functions) / CIS Control 5.4</div>
+        <div><span class="k">Likelihood / Impact</span>MEDIUM / HIGH</div>
+        <div><span class="k">Affected objects</span>1</div>
+      </div>
+      <div class="desc"><strong>Recommendation:</strong> Review the membership of every group over the 5-member threshold and remove any account that doesn't require standing privileged access. Consider just-in-time privileged access (e.g. time-bound group membership) instead of permanent membership for administrators who only need it occasionally.</div>
+      <div class="affected">Affected: Domain Admins (7 members)</div>
+    </div>
+    
+    <div class="finding medium">
+      <span class="badge medium">Medium</span>
+      <span class="risk-id">AD-004</span>
+      <h2>Stale or unused enabled accounts</h2>
+      <div class="desc">1 enabled account(s) have not logged on in over 90 days (lastLogonTimestamp is a replicated approximation, so actual staleness may be greater).</div>
+      <div class="grid">
+        <div><span class="k">MITRE ATT&amp;CK</span>T1078 — Valid Accounts</div>
+        <div><span class="k">Control reference</span>NIST 800-53 AC-2(3) (Disable Inactive Accounts) / CIS Control 5.3</div>
+        <div><span class="k">Likelihood / Impact</span>MEDIUM / MEDIUM</div>
+        <div><span class="k">Affected objects</span>1</div>
+      </div>
+      <div class="desc"><strong>Recommendation:</strong> Disable accounts with no legitimate recent activity, and put a periodic access review in place so stale accounts are caught and disabled automatically rather than discovered during an audit.</div>
+      <div class="affected">Affected: jsmith</div>
+    </div>
+    
+  
+
+  <footer>Generated by AD Risk Auditor — github.com/Schneider-hr/ad-risk-auditor</footer>
+</div>
+</body>
+</html>

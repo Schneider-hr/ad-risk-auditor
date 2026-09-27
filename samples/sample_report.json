@@ -1,0 +1,89 @@
+{
+  "domain": "schneider050.local",
+  "users_scanned": 4,
+  "overall_posture": "Critical \u2014 immediate remediation required",
+  "summary_counts": {
+    "Critical": 1,
+    "High": 3,
+    "Medium": 1,
+    "Low": 0
+  },
+  "errors": [],
+  "findings": [
+    {
+      "risk_id": "AD-001",
+      "title": "Accounts vulnerable to AS-REP Roasting",
+      "description": "1 enabled user account(s) have Kerberos pre-authentication disabled (userAccountControl DONT_REQUIRE_PREAUTH). Any unauthenticated user on the network can request an AS-REP for these accounts and attempt to crack the returned hash offline to recover the account password.",
+      "affected_objects": [
+        "alice"
+      ],
+      "likelihood": "HIGH",
+      "impact": "HIGH",
+      "mitre_attack": "T1558.004 \u2014 Steal or Forge Kerberos Tickets: AS-REP Roasting",
+      "control_reference": "NIST 800-53 IA-5(1) (Password-Based Authentication) / CIS Control 5.2",
+      "recommendation": "Re-enable Kerberos pre-authentication for every affected account unless a specific, documented legacy application requires it. Where it cannot be disabled, ensure the account uses a long, random password (25+ characters) that is not feasible to crack offline.",
+      "detector": "asrep_roasting",
+      "rating": "Critical"
+    },
+    {
+      "risk_id": "AD-002",
+      "title": "Kerberoastable service accounts",
+      "description": "1 enabled user account(s) have a Service Principal Name (SPN) set, meaning any authenticated domain user can request a Kerberos service ticket for them and attempt to crack it offline. 1 of these also belong to more than one group, which is worth checking for privileged membership.",
+      "affected_objects": [
+        "svc_backup"
+      ],
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "mitre_attack": "T1558.003 \u2014 Steal or Forge Kerberos Tickets: Kerberoasting",
+      "control_reference": "NIST 800-53 IA-5(1) / CIS Control 5.2",
+      "recommendation": "Set long, random passwords (25+ characters) on every service account, rotate them on a defined schedule, and prefer Group Managed Service Accounts (gMSA) for any new service account, since gMSA passwords are machine-managed and effectively immune to offline cracking.",
+      "detector": "kerberoasting",
+      "rating": "High"
+    },
+    {
+      "risk_id": "AD-003",
+      "title": "Weak domain password policy",
+      "description": "The default domain password policy has the following weaknesses: minimum password length is 8 characters (recommended: 14+); passwords never expire.",
+      "affected_objects": [
+        "Default Domain Policy"
+      ],
+      "likelihood": "HIGH",
+      "impact": "MEDIUM",
+      "mitre_attack": "T1110 \u2014 Brute Force",
+      "control_reference": "NIST 800-63B (Memorized Secret Verifiers) / CIS Control 5.2",
+      "recommendation": "Raise the minimum password length to at least 14 characters, keep complexity enabled, and set a bounded maximum password age. For accounts protected by MFA, consider NIST 800-63B's guidance to favor length over forced periodic rotation.",
+      "detector": "password_policy",
+      "rating": "High"
+    },
+    {
+      "risk_id": "AD-005",
+      "title": "Privileged group membership sprawl",
+      "description": "1 tier-0 group(s) exceed 5 members: Domain Admins (7 members). Each additional member is a full domain-compromise path if their account is breached.",
+      "affected_objects": [
+        "Domain Admins (7 members)"
+      ],
+      "likelihood": "MEDIUM",
+      "impact": "HIGH",
+      "mitre_attack": "T1078.002 \u2014 Valid Accounts: Domain Accounts",
+      "control_reference": "NIST 800-53 AC-6(1) (Least Privilege \u2014 Authorize Access to Security Functions) / CIS Control 5.4",
+      "recommendation": "Review the membership of every group over the 5-member threshold and remove any account that doesn't require standing privileged access. Consider just-in-time privileged access (e.g. time-bound group membership) instead of permanent membership for administrators who only need it occasionally.",
+      "detector": "privileged_sprawl",
+      "rating": "High"
+    },
+    {
+      "risk_id": "AD-004",
+      "title": "Stale or unused enabled accounts",
+      "description": "1 enabled account(s) have not logged on in over 90 days (lastLogonTimestamp is a replicated approximation, so actual staleness may be greater).",
+      "affected_objects": [
+        "jsmith"
+      ],
+      "likelihood": "MEDIUM",
+      "impact": "MEDIUM",
+      "mitre_attack": "T1078 \u2014 Valid Accounts",
+      "control_reference": "NIST 800-53 AC-2(3) (Disable Inactive Accounts) / CIS Control 5.3",
+      "recommendation": "Disable accounts with no legitimate recent activity, and put a periodic access review in place so stale accounts are caught and disabled automatically rather than discovered during an audit.",
+      "detector": "stale_accounts",
+      "rating": "Medium"
+    }
+  ]
+}
